@@ -7,7 +7,7 @@ import pygame as pg
 
 WIDTH = 1100  # ゲームウィンドウの幅
 HEIGHT = 650  # ゲームウィンドウの高さ
-NUM_OF_BOMBS = 5
+NUM_OF_BOMBS = 5  # 爆弾の個数
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 
@@ -96,8 +96,8 @@ class Beam:
         """
         self.img = pg.image.load(f"fig/beam.png")
         self.rct = self.img.get_rect()
-        self.rct.center = bird.rct.center
-        self.rct.left = bird.rct.right
+        self.rct.centery = bird.rct.centery  # ビームの中心縦座標 = こうかとんの中心縦座標
+        self.rct.left = bird.rct.right  # ビームの左座標 = こうかとんの右座標
         self.vx, self.vy = +5, 0
 
     def update(self, screen: pg.Surface):
@@ -162,14 +162,11 @@ def main():
                 # スペースキー押下でBeamクラスのインスタンス生成
                 beam = Beam(bird)            
         screen.blit(bg_img, [0, 0])
-        
+
         for bomb in bombs:
             if bird.rct.colliderect(bomb.rct):
                 # ゲームオーバー時に，こうかとん画像を切り替え，1秒間表示させる
                 bird.change_img(8, screen)
-                fonto=pg.font(None,80)
-                txt=fonto.render("Game Over",True,(255,0,0))
-                screen.blit(txt,[WIDTH//2-150,HEIGHT//2])    
                 pg.display.update()
                 time.sleep(1)
                 return
@@ -179,9 +176,9 @@ def main():
                 if beam.rct.colliderect(bomb.rct):  # ビームと爆弾の衝突判定
                     beam = None
                     bombs[i] = None
-                    bird.change_img(6,screen)
-                    pg.display.update()
-        bombs = [bomb for bomb in bombs if bomb is not None]            
+                    bird.change_img(6, screen)  # よろこびエフェクト
+                    pg.display.update()                    
+        bombs = [bomb for bomb in bombs if bomb is not None]  # Noneを取り除く
 
         key_lst = pg.key.get_pressed()
         bird.update(key_lst, screen)
